@@ -1,0 +1,46 @@
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Node / React / Vite
+node_modules/
+dist/
+build/
+.vite/
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# ML artifacts and datasets
+ml/artifacts/
+ml/data/
+backend/app/ml/
+*.pkl
+*.joblib
+*.csv
+*.xlsx
+*.pt
+*.pth
+*.h5
+*.onnx
+
+# Database / local files
+*.db
+*.sqlite
+*.sqlite3
+
+# OS / editor
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
