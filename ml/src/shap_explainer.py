@@ -11,15 +11,21 @@ import shap
 from utils import ARTIFACTS_DIR, FEATURE_COLUMNS, ensure_artifacts_dir
 
 
-def create_shap_explainer(model):
+def create_shap_explainer(model, background_data: np.ndarray | pd.DataFrame | None = None):
     """
     Creates the appropriate SHAP explainer based on model type.
     For tree models, TreeExplainer is efficient and accurate.
+    For linear models, LinearExplainer needs background data.
     """
     model_name = model.__class__.__name__.lower()
 
     if "randomforest" in model_name or "xgb" in model_name or "boost" in model_name:
         return shap.TreeExplainer(model)
+
+    if "logistic" in model_name or "linear" in model_name:
+        if background_data is None:
+            background_data = np.zeros((1, len(FEATURE_COLUMNS)))
+        return shap.LinearExplainer(model, background_data)
 
     return shap.Explainer(model)
 

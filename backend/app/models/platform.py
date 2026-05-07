@@ -45,6 +45,11 @@ class PlatformData(Base):
     recent_missed_rent_3m = Column(Float, nullable=False)
     rent_consistency_ratio = Column(Float, nullable=False)
 
+    gig_creditworthiness_score = Column(Float, nullable=False)
+    earned_trust_score = Column(Float, nullable=False)
+    income_reliability_ratio = Column(Float, nullable=False)
+    payment_behavior_consistency = Column(Float, nullable=False)
+
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     user = relationship("User", back_populates="platforms")

@@ -40,6 +40,11 @@ FEATURE_COLUMNS: List[str] = [
     "utility_delay_score",
     "recent_missed_rent_3m",
     "rent_consistency_ratio",
+    # Phase 1: Gig-worker-specific credit assessment features
+    "gig_creditworthiness_score",  # CORRECTED: Replaces CIBIL with gig-specific score (0-100)
+    "earned_trust_score",           # How consistently worker delivered quality work (0-1)
+    "income_reliability_ratio",     # Income stability + growth indicator (0-1)
+    "payment_behavior_consistency", # Payment timeliness consistency (0-1)
 ]
 
 TARGET_COLUMN = "default"
@@ -69,7 +74,7 @@ def validate_dataset(df: pd.DataFrame) -> None:
     if df[TARGET_COLUMN].isnull().any():
         raise ValueError("Target column contains null values.")
 
-     unique_targets = sorted(df[TARGET_COLUMN].unique().tolist())
+    unique_targets = sorted(df[TARGET_COLUMN].unique().tolist())
     if any(v not in [0, 1] for v in unique_targets):
         raise ValueError(f"Target must be binary (0/1). Found: {unique_targets}")
 

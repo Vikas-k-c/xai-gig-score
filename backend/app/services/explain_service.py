@@ -175,13 +175,28 @@
 
 from pathlib import Path
 from typing import Dict, List, Tuple
+import sys
 
 import joblib
 import numpy as np
 import pandas as pd
 
+from .feature_engineering import FEATURE_COLUMNS as BASE_FEATURE_COLUMNS
+
 BASE_DIR = Path(__file__).resolve().parent.parent
-ML_DIR = BASE_DIR / "ml"
+PROJECT_ROOT = BASE_DIR.parent.parent
+ML_DIR = PROJECT_ROOT / "ml" / "artifacts"
+ML_SRC_DIR = PROJECT_ROOT / "ml" / "src"
+if str(ML_SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(ML_SRC_DIR))
+
+try:
+    from feature_engineering import engineer_features as engineer_ml_features
+except ImportError as exc:
+    raise ImportError(
+        f"Unable to import the ML feature engineering module from {ML_SRC_DIR}. "
+        "Ensure the ml/src folder exists and contains feature_engineering.py."
+    ) from exc
 
 EXPLAINER_PATH = ML_DIR / "explainer.pkl"
 FEATURES_PATH = ML_DIR / "features.pkl"
@@ -215,6 +230,11 @@ FEATURE_LABELS = {
     "utility_delay_score": "Utility delay score",
     "recent_missed_rent_3m": "Recent missed rent (3 months)",
     "rent_consistency_ratio": "Rent consistency ratio",
+    "income_stability_buffer": "Income stability buffer",
+    "platform_earnings_density": "Platform earnings density",
+    "behavioral_discipline_score": "Behavioral discipline score",
+    "trust_growth_multiplier": "Trust-growth multiplier",
+    "liquidity_debt_stress_index": "Liquidity-to-debt stress",
 }
 
 
@@ -259,8 +279,10 @@ def _extract_1d_shap_values(shap_values) -> np.ndarray:
 def explain_prediction(features_dict: Dict[str, float], top_k: int = 3) -> Tuple[List[str], List[str]]:
     explainer, feature_order = load_explainer_artifacts()
 
-    row = {feature: float(features_dict.get(feature, 0.0)) for feature in feature_order}
-    X = pd.DataFrame([row], columns=feature_order)
+    base_row = {feature: float(features_dict.get(feature, 0.0)) for feature in BASE_FEATURE_COLUMNS}
+    X_base = pd.DataFrame([base_row], columns=BASE_FEATURE_COLUMNS)
+    X = engineer_ml_features(X_base)
+    X = X[feature_order]
 
     shap_values = explainer.shap_values(X)
     values = _extract_1d_shap_values(shap_values)

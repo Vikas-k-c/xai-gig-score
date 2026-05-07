@@ -28,6 +28,10 @@ FEATURE_COLUMNS = [
     "utility_delay_score",
     "recent_missed_rent_3m",
     "rent_consistency_ratio",
+    "gig_creditworthiness_score",
+    "earned_trust_score",
+    "income_reliability_ratio",
+    "payment_behavior_consistency",
 ]
 
 
@@ -69,6 +73,10 @@ def build_features(platforms: List[PlatformData]) -> Dict[str, float]:
         "utility_delay_score": avg("utility_delay_score"),
         "recent_missed_rent_3m": avg("recent_missed_rent_3m"),
         "rent_consistency_ratio": avg("rent_consistency_ratio"),
+        "gig_creditworthiness_score": avg("gig_creditworthiness_score"),
+        "earned_trust_score": avg("earned_trust_score"),
+        "income_reliability_ratio": avg("income_reliability_ratio"),
+        "payment_behavior_consistency": avg("payment_behavior_consistency"),
     }
 
     return features
